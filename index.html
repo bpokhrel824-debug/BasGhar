@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pokhara Homestay — Direct Booking</title>
+<title>BasGhar — Pokhara & Kathmandu Direct Booking</title>
 <style>
   :root{
     --lake:#1f6f78;
@@ -38,11 +38,11 @@
     margin:0;
     font-size:14px;
     color:#dbeeee;
-    max-width:420px;
+    max-width:440px;
     margin:0 auto;
   }
   .container{
-    max-width:920px;
+    max-width:1000px;
     margin:-36px auto 0;
     padding:0 16px 40px;
   }
@@ -90,6 +90,26 @@
     font-size:14px;
     background:var(--white);
   }
+  .city-toggle{
+    display:flex;
+    gap:8px;
+    margin-bottom:14px;
+  }
+  .city-btn{
+    flex:1;
+    padding:9px;
+    border:1px solid var(--lake);
+    background:var(--white);
+    color:var(--lake-deep);
+    border-radius:7px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .city-btn.active{
+    background:var(--lake);
+    color:var(--white);
+  }
   .grid{
     display:grid;
     grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
@@ -104,12 +124,12 @@
     flex-direction:column;
   }
   .listing .thumb{
-    height:110px;
+    height:100px;
     background:linear-gradient(135deg,var(--lake),var(--lake-deep));
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:34px;
+    font-size:32px;
   }
   .listing .body{
     padding:12px 14px 14px;
@@ -119,18 +139,18 @@
   }
   .listing h3{
     margin:0 0 4px;
-    font-size:15px;
+    font-size:14px;
   }
   .listing .loc{
     font-size:12px;
     color:var(--muted);
-    margin-bottom:8px;
+    margin-bottom:6px;
   }
-  .listing .price{
-    font-weight:700;
+  .listing .meta{
+    font-size:12px;
     color:var(--clay);
+    font-weight:700;
     margin-bottom:10px;
-    font-size:14px;
   }
   .listing .actions{
     margin-top:auto;
@@ -153,7 +173,7 @@
   .btn-outline{ background:var(--white); color:var(--lake-deep); border:1px solid var(--lake); }
 
   form.add-form{ display:flex; flex-direction:column; gap:10px; }
-  form.add-form input, form.add-form textarea{
+  form.add-form input, form.add-form textarea, form.add-form select{
     padding:10px;
     border:1px solid var(--border);
     border-radius:7px;
@@ -171,27 +191,23 @@
     padding:30px 10px;
     font-size:14px;
   }
-  .badge{
-    display:inline-block;
-    background:var(--lake);
-    color:var(--white);
-    font-size:11px;
-    padding:2px 8px;
-    border-radius:12px;
-    margin-left:6px;
-  }
   .note{
     font-size:12px;
     color:var(--muted);
     margin-top:10px;
+  }
+  .count{
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:10px;
   }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>🏔️ Pokhara Homestay</h1>
-  <p>Booking commission ma bachat — homestay/guesthouse malik sanga direct connect hunus</p>
+  <h1>🏔️ BasGhar</h1>
+  <p>Pokhara ra Kathmandu ko commission-free homestay & hotel direct booking — WhatsApp bata seedha host sanga connect hunus</p>
 </header>
 
 <div class="container">
@@ -199,44 +215,62 @@
   <div class="panel">
     <div class="tabs">
       <button class="tab-btn active" data-tab="browse">Browse Listings</button>
-      <button class="tab-btn" data-tab="add">+ List Your Homestay</button>
+      <button class="tab-btn" data-tab="add">+ List Your Property</button>
     </div>
 
     <!-- BROWSE TAB -->
     <div id="tab-browse">
+      <div class="city-toggle">
+        <button class="city-btn active" data-city="All">All Cities</button>
+        <button class="city-btn" data-city="Pokhara">Pokhara</button>
+        <button class="city-btn" data-city="Kathmandu">Kathmandu</button>
+      </div>
       <div class="filters">
-        <input id="searchInput" type="text" placeholder="Location khojnus (Lakeside, Ghandruk...)">
-        <select id="sortSelect">
-          <option value="default">Sort: Newest</option>
-          <option value="low">Price: Low to High</option>
-          <option value="high">Price: High to Low</option>
+        <input id="searchInput" type="text" placeholder="Location/naam khojnus (Lakeside, Thamel, Boudha...)">
+        <select id="typeSelect">
+          <option value="All">All Types</option>
+          <option value="Homestay">Homestay</option>
+          <option value="Guest House">Guest House</option>
+          <option value="Hotel">Hotel</option>
+          <option value="Resort">Resort</option>
+          <option value="Lodge">Lodge</option>
+          <option value="Bed & Breakfast">Bed & Breakfast</option>
         </select>
       </div>
+      <div class="count" id="countMsg"></div>
       <div id="listingsGrid" class="grid"></div>
-      <div id="emptyMsg" class="empty" style="display:none;">Kunai listing bhetiyena. Filter change garera herna sakincha, wa "List Your Homestay" bata thapnus.</div>
+      <div id="emptyMsg" class="empty" style="display:none;">Kunai listing bhetiyena. Filter change garera hernus.</div>
     </div>
 
     <!-- ADD TAB -->
     <div id="tab-add" style="display:none;">
       <form class="add-form" id="addForm">
-        <label>Homestay/Guesthouse ko naam</label>
+        <label>Property ko naam</label>
         <input type="text" id="fName" required placeholder="Ex: Lake View Homestay">
 
-        <label>Location</label>
+        <label>City</label>
+        <select id="fCity" required>
+          <option value="Pokhara">Pokhara</option>
+          <option value="Kathmandu">Kathmandu</option>
+        </select>
+
+        <label>Location / Area</label>
         <input type="text" id="fLocation" required placeholder="Ex: Lakeside, Pokhara">
 
-        <label>Rate per night (NPR)</label>
-        <input type="number" id="fPrice" required placeholder="Ex: 1500">
-
-        <label>Description (short)</label>
-        <textarea id="fDesc" rows="3" placeholder="Rooms, view, facilities..."></textarea>
+        <label>Type</label>
+        <select id="fType" required>
+          <option value="Homestay">Homestay</option>
+          <option value="Guest House">Guest House</option>
+          <option value="Hotel">Hotel</option>
+          <option value="Resort">Resort</option>
+        </select>
 
         <label>Contact number (WhatsApp)</label>
         <input type="text" id="fPhone" required placeholder="98XXXXXXXX">
 
         <button type="submit" class="btn btn-primary">Add Listing</button>
       </form>
-      <p class="note">Note: Yo demo version ho — data browser ko localStorage ma save huncha (afnai device ma matra dekhincha). Real app ko lagi shared database (Firebase/Supabase) chahincha.</p>
+      <p class="note">Note: Naya listing yo browser ko localStorage ma save huncha (afnai device ma matra dekhincha). Sabai user le dekhne banauna Firebase/Supabase jasto shared database chahincha.</p>
     </div>
   </div>
 
@@ -244,49 +278,46 @@
 
 <script>
 /*
-  POKHARA HOMESTAY — MVP demo
-  - Data stored in localStorage (works offline, no backend needed for demo)
-  - To make this a REAL multi-user app, replace localStorage calls with
-    a shared database like Firebase Firestore or Supabase (both have free tiers)
+  BASGHAR — Pokhara & Kathmandu homestay/hotel direct booking MVP
+  seedData: real listings gathered via Google Places (name, location, phone, rating)
+  User-added listings are stored separately in localStorage and merged with seedData at render time.
 */
 
-const STORAGE_KEY = 'pokharaHomestayListings';
+const SEED_DATA = [{"id": 1, "name": "Bishnu Homestay", "location": "Sedibagar, Lakeside", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9846047083", "rating": "4.8", "emoji": "🏡"}, {"id": 2, "name": "The North Face Inn's Homestay", "location": "Batas Marg, Lakeside", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9846033087", "rating": "5.0", "emoji": "🏡"}, {"id": 3, "name": "HHQ HomeStay", "location": "Shrikrishna Marga, Lakeside", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9802850777", "rating": "4.8", "emoji": "🏡"}, {"id": 4, "name": "Hom's Homestay Retreat", "location": "Sarangkot", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9869866080", "rating": "4.9", "emoji": "🏡"}, {"id": 5, "name": "Mangal Home Stay", "location": "Pokhara", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9860531090", "rating": "4.7", "emoji": "🏡"}, {"id": 6, "name": "Cozy Home", "location": "Lakeside Rd", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9826165584", "rating": "4.9", "emoji": "🏡"}, {"id": 7, "name": "Sonam Homestay", "location": "Pokhara", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "61463305", "rating": "4.2", "emoji": "🏡"}, {"id": 8, "name": "Nepali Cottage Guest House", "location": "Pahari Marga, Lakeside", "city": "Pokhara", "type": "Guest House", "price": null, "phone": "9856031094", "rating": "4.4", "emoji": "🛏️"}, {"id": 9, "name": "Miteri Sai Homestay", "location": "7 Lakeside Rd", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9851103246", "rating": "4.5", "emoji": "🏡"}, {"id": 10, "name": "Peace Eye Guest House & Lounge Cafe", "location": "Street 7, Lakeside", "city": "Pokhara", "type": "Guest House", "price": null, "phone": "61451699", "rating": "4.6", "emoji": "🛏️"}, {"id": 11, "name": "Hotel Lake Shore", "location": "Pragati Marga, Lakeside", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "61457830", "rating": "4.6", "emoji": "🏨"}, {"id": 12, "name": "Hotel Diplomat", "location": "Pragati Marga, Lakeside", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "61455917", "rating": "4.4", "emoji": "🏨"}, {"id": 13, "name": "Hotel Green Tara", "location": "Street No 10, Lakeside", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "9851052519", "rating": "4.0", "emoji": "🏨"}, {"id": 14, "name": "Hotel Nightingale", "location": "5 Lakeside Rd", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "9856077197", "rating": "4.6", "emoji": "🏨"}, {"id": 15, "name": "Hotel The Lake", "location": "Pokhara", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "61457256", "rating": "3.8", "emoji": "🏨"}, {"id": 16, "name": "Hotel Tulsi", "location": "14th Street, Lakeside", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "61450313", "rating": "4.3", "emoji": "🏨"}, {"id": 17, "name": "Hotel White Yak", "location": "9A Durbar Marg, Lakeside", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "9708609773", "rating": "3.9", "emoji": "🏨"}, {"id": 18, "name": "Hotel Juju", "location": "Durbar Marg, Lakeside", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "61456315", "rating": "4.6", "emoji": "🏨"}, {"id": 19, "name": "Hotel K2 Pokhara", "location": "Utsab Himalaya St", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "61457342", "rating": "4.5", "emoji": "🏨"}, {"id": 20, "name": "New Tourist Guest House", "location": "Lakeside Rd", "city": "Pokhara", "type": "Guest House", "price": null, "phone": "61462421", "rating": "4.7", "emoji": "🛏️"}, {"id": 21, "name": "Hotel Yellow Pagoda Pokhara", "location": "Damside Rd", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "9818209370", "rating": "4.2", "emoji": "🏨"}, {"id": 22, "name": "Hotel Sandalwood", "location": "Damside, near Fewa Dam", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "9856033910", "rating": "4.8", "emoji": "🏨"}, {"id": 23, "name": "Hotel Glory Garden Pokhara", "location": "5 Lakeside Rd", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "9856067869", "rating": "4.8", "emoji": "🏨"}, {"id": 24, "name": "Hotel Vajra Inn & Apartments", "location": "17 Damside Rd", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "61455283", "rating": "3.8", "emoji": "🏨"}, {"id": 25, "name": "Hotel Pokhara Grande", "location": "H10", "city": "Pokhara", "type": "Resort", "price": null, "phone": "61450210", "rating": "4.3", "emoji": "🌴"}, {"id": 26, "name": "Hotel Peaceful", "location": "Damside Margh", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "9846045684", "rating": "3.5", "emoji": "🏨"}, {"id": 27, "name": "Hotel KC", "location": "Damside", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "452560", "rating": "4.0", "emoji": "🏨"}, {"id": 28, "name": "Hotel Garden", "location": "Damside", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "9805841701", "rating": "4.3", "emoji": "🏨"}, {"id": 29, "name": "Hotel Mountain View Lakeside", "location": "1st Street, Kedareshwor Marga", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "9856034222", "rating": "4.5", "emoji": "🏨"}, {"id": 30, "name": "Dorje's Resort & Spa", "location": "Sedi, above Annapurna Cable Car", "city": "Pokhara", "type": "Resort", "price": null, "phone": "61590735", "rating": "4.9", "emoji": "🌴"}, {"id": 31, "name": "Sarangkot Mountain Lodge", "location": "Sarangkot", "city": "Pokhara", "type": "Lodge", "price": null, "phone": "9856067928", "rating": "4.7", "emoji": "⛰️"}, {"id": 32, "name": "Majestic Lake Front Hotel & Suites", "location": "Street 18B, Lakeside Rd", "city": "Pokhara", "type": "Hotel", "price": null, "phone": "61591601", "rating": "4.8", "emoji": "🏨"}, {"id": 33, "name": "Lake View Resort", "location": "126 Main Road", "city": "Pokhara", "type": "Resort", "price": null, "phone": "61451477", "rating": "4.2", "emoji": "🌴"}, {"id": 34, "name": "Mountain Glory Forest Resort & Spa", "location": "Pokhara", "city": "Pokhara", "type": "Resort", "price": null, "phone": "9802859011", "rating": "4.5", "emoji": "🌴"}, {"id": 35, "name": "Sunshine Resort Pokhara", "location": "Phedi Patan, Lekhnath", "city": "Pokhara", "type": "Resort", "price": null, "phone": "9801181115", "rating": "4.6", "emoji": "🌴"}, {"id": 36, "name": "The Pavilions Himalayas The Farm", "location": "Ward No. 22", "city": "Pokhara", "type": "Resort", "price": null, "phone": "9856025997", "rating": "4.5", "emoji": "🌴"}, {"id": 37, "name": "Rock Garden Resort", "location": "Pokhara", "city": "Pokhara", "type": "Resort", "price": null, "phone": "9861732949", "rating": "3.9", "emoji": "🌴"}, {"id": 38, "name": "The Lakeside Retreat Pokhara", "location": "Street 3, Lakeside Rd", "city": "Pokhara", "type": "Resort", "price": null, "phone": "61454226", "rating": "4.3", "emoji": "🌴"}, {"id": 39, "name": "Mount Fuji Homestay", "location": "Begnas-Bhorletar Rd", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9861329899", "rating": "4.8", "emoji": "🏡"}, {"id": 40, "name": "The Destination Nepali Family Experience", "location": "Begnastal", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9820614695", "rating": "5.0", "emoji": "🏡"}, {"id": 41, "name": "Double Lake View Homestay", "location": "Dharapani, Begnas", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9846906755", "rating": "5.0", "emoji": "🏡"}, {"id": 42, "name": "The Begnas Lake Resort & Villas", "location": "Begnas Lake", "city": "Pokhara", "type": "Resort", "price": null, "phone": "9856061080", "rating": "4.3", "emoji": "🌴"}, {"id": 43, "name": "So-Love Organic Farm", "location": "Lekhnath", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9824136338", "rating": "4.8", "emoji": "🏡"}, {"id": 44, "name": "Begnas Lake Vision Homestay & Restaurant", "location": "Begnas Bhorletar, Lekhnath", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9846064084", "rating": "5.0", "emoji": "🏡"}, {"id": 45, "name": "Himalaya Serene View Guest House & Farm Stay", "location": "Amar Siddha Marg, Lekhnath", "city": "Pokhara", "type": "Guest House", "price": null, "phone": "9846940188", "rating": "4.9", "emoji": "🛏️"}, {"id": 46, "name": "Amrit Kunja Organic Permaculture Farm", "location": "Majhthana", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9825113728", "rating": "4.8", "emoji": "🏡"}, {"id": 47, "name": "Begnas Rupa Homestay and Picnic Spot", "location": "Lekhnath", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9856080449", "rating": "5.0", "emoji": "🏡"}, {"id": 48, "name": "Dinesh House", "location": "Pachabhaiya, Begnas Tal", "city": "Pokhara", "type": "Homestay", "price": null, "phone": "9849539439", "rating": "4.8", "emoji": "🏡"}, {"id": 49, "name": "Namaste Guest House", "location": "Pokhara", "city": "Pokhara", "type": "Guest House", "price": null, "phone": "9814148755", "rating": "5.0", "emoji": "🛏️"}, {"id": 50, "name": "Peace Guesthouse Cottage", "location": "6 Lakeside Rd", "city": "Pokhara", "type": "Guest House", "price": null, "phone": "9856028973", "rating": "4.8", "emoji": "🛏️"}, {"id": 51, "name": "Mingo Guest House", "location": "Durbar Marg", "city": "Pokhara", "type": "Guest House", "price": null, "phone": "9826165695", "rating": "4.6", "emoji": "🛏️"}, {"id": 52, "name": "Beli Guest House", "location": "6 Lakeside Rd", "city": "Pokhara", "type": "Guest House", "price": null, "phone": "9824151505", "rating": "4.8", "emoji": "🛏️"}, {"id": 53, "name": "Harvest Moon Guest House", "location": "Street No. 13", "city": "Pokhara", "type": "Guest House", "price": null, "phone": "9849185030", "rating": "4.5", "emoji": "🛏️"}, {"id": 54, "name": "Namaste Guest House Pokhara", "location": "Pokhara", "city": "Pokhara", "type": "Guest House", "price": null, "phone": "9846525555", "rating": "4.4", "emoji": "🛏️"}, {"id": 55, "name": "Galaxy Inn Guest House", "location": "Pokhara", "city": "Pokhara", "type": "Guest House", "price": null, "phone": "9829103824", "rating": "4.3", "emoji": "🛏️"}, {"id": 56, "name": "Pushpa Guest House", "location": "6 Lakeside Rd", "city": "Pokhara", "type": "Guest House", "price": null, "phone": "9803941444", "rating": "4.4", "emoji": "🛏️"}, {"id": 57, "name": "Thamel President Hotel", "location": "Thabahi Sadak, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "9841189697", "rating": "5.0", "emoji": "🏨"}, {"id": 58, "name": "Nana Hotels Thamel", "location": "Chaksibari Marg, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "14701960", "rating": "4.0", "emoji": "🏨"}, {"id": 59, "name": "Kathmandu Regency Hotel", "location": "Chhetrapati, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15369847", "rating": "4.1", "emoji": "🏨"}, {"id": 60, "name": "Hotel Mega & Apartment", "location": "Sat Ghumti Marg, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "9851340075", "rating": "4.7", "emoji": "🏨"}, {"id": 61, "name": "Hotel Downtown Thamel", "location": "Sat Ghumti Marg, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "14700150", "rating": "3.8", "emoji": "🏨"}, {"id": 62, "name": "Aryatara Kathmandu Hotel", "location": "Kesarmahal Rd, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "9860856648", "rating": "4.4", "emoji": "🏨"}, {"id": 63, "name": "Thamel Hotel & Spa", "location": "Keshar Mahal Marg, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15912395", "rating": "4.7", "emoji": "🏨"}, {"id": 64, "name": "Hotel Aashraya Home", "location": "Z Street, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "14548400", "rating": "4.9", "emoji": "🏨"}, {"id": 65, "name": "Thani Boutique Hotel", "location": "Amrit Marg, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15352343", "rating": "5.0", "emoji": "🏨"}, {"id": 66, "name": "Hotel Sara Inn", "location": "Paknajol Marg, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "9808619090", "rating": "4.9", "emoji": "🏨"}, {"id": 67, "name": "Tharlam Guesthouse", "location": "Boudhanath Sadak, Boudha", "city": "Kathmandu", "type": "Guest House", "price": null, "phone": "9840338895", "rating": "4.4", "emoji": "🛏️"}, {"id": 68, "name": "Hotel Anuttara", "location": "Boudha", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "9802271777", "rating": "4.9", "emoji": "🏨"}, {"id": 69, "name": "Hotel Padma", "location": "Boudha Sadak", "city": "Kathmandu", "type": "Guest House", "price": null, "phone": "14562452", "rating": "4.3", "emoji": "🛏️"}, {"id": 70, "name": "Boudha Boutique Hotel", "location": "Mahankal Road", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15919418", "rating": "4.2", "emoji": "🏨"}, {"id": 71, "name": "Shambaling Boutique Hotel", "location": "Ramhiti, Boudha Rd", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "14916868", "rating": "4.6", "emoji": "🏨"}, {"id": 72, "name": "Pema Boutique Hotel", "location": "Phulbari, Teenchuli Road, Boudha", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "14917833", "rating": "4.6", "emoji": "🏨"}, {"id": 73, "name": "Hotel Siddhi Manakamana", "location": "Uddan Marg, Boudha", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "14917700", "rating": "4.4", "emoji": "🏨"}, {"id": 74, "name": "Bodhiz Inn", "location": "Bodhiz St, Boudha", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "14916440", "rating": "4.5", "emoji": "🏨"}, {"id": 75, "name": "Hotel Bhrikuti Tara", "location": "Boudhadwar Marga", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "14595266", "rating": "4.5", "emoji": "🏨"}, {"id": 76, "name": "New Dungkar Guest House", "location": "Boudha", "city": "Kathmandu", "type": "Guest House", "price": null, "phone": "9813392955", "rating": "3.5", "emoji": "🛏️"}, {"id": 77, "name": "Temple House", "location": "Patko Mamaru Galli, Patan", "city": "Kathmandu", "type": "Guest House", "price": null, "phone": "15424487", "rating": "4.4", "emoji": "🛏️"}, {"id": 78, "name": "KGH Patan", "location": "Mikhabahal, Lalitpur", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "9801176375", "rating": "4.2", "emoji": "🏨"}, {"id": 79, "name": "The Inn Patan", "location": "Traditional Road, Lalitpur", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15447834", "rating": "4.4", "emoji": "🏨"}, {"id": 80, "name": "Tajaa Pha The Heritage Home", "location": "Pimbahal Rd, Lalitpur", "city": "Kathmandu", "type": "Guest House", "price": null, "phone": "9851039444", "rating": "4.7", "emoji": "🛏️"}, {"id": 81, "name": "Boutique Heritage Home", "location": "Saugal Chowk, Lalitpur", "city": "Kathmandu", "type": "Bed & Breakfast", "price": null, "phone": "9761849358", "rating": "4.4", "emoji": "☕"}, {"id": 82, "name": "Karuna Hotel Patan Kathmandu", "location": "Bhindyolachhi, Lalitpur", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15424373", "rating": "4.8", "emoji": "🏨"}, {"id": 83, "name": "Dalucha Heritage", "location": "Kwalakhu Rd, Lalitpur", "city": "Kathmandu", "type": "Guest House", "price": null, "phone": "", "rating": "4.7", "emoji": "🛏️"}, {"id": 84, "name": "Fresco Retreat", "location": "Narayan Bhawan, Lalitpur", "city": "Kathmandu", "type": "Bed & Breakfast", "price": null, "phone": "9813605525", "rating": "4.6", "emoji": "☕"}, {"id": 85, "name": "Awale House", "location": "Lalitpur", "city": "Kathmandu", "type": "Guest House", "price": null, "phone": "9808441661", "rating": "4.6", "emoji": "🛏️"}, {"id": 86, "name": "Hidden Leaf Bed & Breakfast", "location": "Lalitpur", "city": "Kathmandu", "type": "Bed & Breakfast", "price": null, "phone": "15153683", "rating": "4.1", "emoji": "☕"}, {"id": 87, "name": "Kumari Boutique Hotel", "location": "Chhusya Galli, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15315617", "rating": "4.8", "emoji": "🏨"}, {"id": 88, "name": "Central Courtyard Heritage Hotel & Artisan Cafe", "location": "Kathmandu", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "9823223303", "rating": "4.9", "emoji": "🏨"}, {"id": 89, "name": "Vastu Boutique Hotel", "location": "Chhusya Galli, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15909845", "rating": "4.9", "emoji": "🏨"}, {"id": 90, "name": "Kathmandu Business Hotel", "location": "Bharma Kumari Marga, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15919384", "rating": "4.7", "emoji": "🏨"}, {"id": 91, "name": "Bodhi Boutique Hotel", "location": "Chhusya Galli, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15904774", "rating": "4.6", "emoji": "🏨"}, {"id": 92, "name": "Grand Yak Boutique Hotel", "location": "Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15914344", "rating": "4.3", "emoji": "🏨"}, {"id": 93, "name": "Kantipur Village", "location": "Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15901667", "rating": "4.8", "emoji": "🏨"}, {"id": 94, "name": "Hotel Holy Himalaya", "location": "Bharma Kumari Marga, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15358648", "rating": "4.3", "emoji": "🏨"}, {"id": 95, "name": "Hotel Mums Home", "location": "Chhusya Galli, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15352026", "rating": "4.7", "emoji": "🏨"}, {"id": 96, "name": "Sacred Boutique Hotel", "location": "Bharma Kumari Marga, Thamel", "city": "Kathmandu", "type": "Hotel", "price": null, "phone": "15904512", "rating": "4.4", "emoji": "🏨"}, {"id": 97, "name": "Swayambhu View Guest House", "location": "Devithan Galli, Swayambhu", "city": "Kathmandu", "type": "Guest House", "price": null, "phone": "9803000844", "rating": "4.6", "emoji": "🛏️"}];
 
-const seedData = [
-  { id: 1, name: 'Lake View Homestay', location: 'Lakeside, Pokhara', price: 1500, desc: 'Phewa Lake view room, home-cooked meals available.', phone: '9800000001', emoji: '🏡' },
-  { id: 2, name: 'Ghandruk Heritage Stay', location: 'Ghandruk', price: 1200, desc: 'Traditional Gurung house, mountain view, trekking route access.', phone: '9800000002', emoji: '⛰️' },
-  { id: 3, name: 'Sarangkot Sunrise Stay', location: 'Sarangkot', price: 2000, desc: 'Sunrise view point nearby, private rooms.', phone: '9800000003', emoji: '🌄' },
-];
+const STORAGE_KEY = 'basgharUserListings';
 
-function loadListings(){
+function loadUserListings(){
   const raw = localStorage.getItem(STORAGE_KEY);
-  if(!raw){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(seedData));
-    return seedData;
-  }
-  return JSON.parse(raw);
+  return raw ? JSON.parse(raw) : [];
 }
 
-function saveListings(listings){
+function saveUserListings(listings){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
 }
 
-let listings = loadListings();
+let userListings = loadUserListings();
+let allListings = [...SEED_DATA, ...userListings];
+
+let activeCity = 'All';
 
 function renderListings(){
   const grid = document.getElementById('listingsGrid');
   const emptyMsg = document.getElementById('emptyMsg');
+  const countMsg = document.getElementById('countMsg');
   const query = document.getElementById('searchInput').value.toLowerCase();
-  const sort = document.getElementById('sortSelect').value;
+  const type = document.getElementById('typeSelect').value;
 
-  let filtered = listings.filter(l =>
-    l.name.toLowerCase().includes(query) || l.location.toLowerCase().includes(query)
-  );
-
-  if(sort === 'low') filtered.sort((a,b) => a.price - b.price);
-  if(sort === 'high') filtered.sort((a,b) => b.price - a.price);
+  let filtered = allListings.filter(l => {
+    const matchesCity = activeCity === 'All' || l.city === activeCity;
+    const matchesQuery = l.name.toLowerCase().includes(query) || l.location.toLowerCase().includes(query);
+    const matchesType = type === 'All' || l.type === type;
+    return matchesCity && matchesQuery && matchesType;
+  });
 
   grid.innerHTML = '';
+  countMsg.textContent = filtered.length + ' listing bhetiyo';
+
   if(filtered.length === 0){
     emptyMsg.style.display = 'block';
     return;
@@ -296,12 +327,13 @@ function renderListings(){
   filtered.forEach(l => {
     const card = document.createElement('div');
     card.className = 'listing';
+    const ratingText = l.rating ? ('⭐ ' + l.rating) : '';
     card.innerHTML = `
       <div class="thumb">${l.emoji || '🏠'}</div>
       <div class="body">
         <h3>${escapeHtml(l.name)}</h3>
-        <div class="loc">📍 ${escapeHtml(l.location)}</div>
-        <div class="price">NPR ${l.price} / night</div>
+        <div class="loc">📍 ${escapeHtml(l.location)}, ${escapeHtml(l.city)}</div>
+        <div class="meta">${escapeHtml(l.type)} ${ratingText}</div>
         <div class="actions">
           <a class="btn btn-primary" target="_blank"
              href="https://wa.me/977${l.phone}?text=${encodeURIComponent('Namaste, ' + l.name + ' ma booking ko lagi sodhpuchh garna chahanchu.')}">
@@ -321,7 +353,16 @@ function escapeHtml(str){
 }
 
 document.getElementById('searchInput').addEventListener('input', renderListings);
-document.getElementById('sortSelect').addEventListener('change', renderListings);
+document.getElementById('typeSelect').addEventListener('change', renderListings);
+
+document.querySelectorAll('.city-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.city-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeCity = btn.dataset.city;
+    renderListings();
+  });
+});
 
 // Tab switching
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -340,14 +381,16 @@ document.getElementById('addForm').addEventListener('submit', function(e){
   const newListing = {
     id: Date.now(),
     name: document.getElementById('fName').value.trim(),
+    city: document.getElementById('fCity').value,
     location: document.getElementById('fLocation').value.trim(),
-    price: Number(document.getElementById('fPrice').value),
-    desc: document.getElementById('fDesc').value.trim(),
-    phone: document.getElementById('fPhone').value.trim().replace(/^0/, ''),
+    type: document.getElementById('fType').value,
+    phone: document.getElementById('fPhone').value.trim().replace(/^0/, '').replace(/^\+?977/, ''),
+    rating: '',
     emoji: '🏠'
   };
-  listings.push(newListing);
-  saveListings(listings);
+  userListings.push(newListing);
+  saveUserListings(userListings);
+  allListings = [...SEED_DATA, ...userListings];
   this.reset();
   document.querySelector('[data-tab="browse"]').click();
   renderListings();
